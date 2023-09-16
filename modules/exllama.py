@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import torch
 import torch.nn.functional as F
 from torch import version as torch_version
 
@@ -128,6 +129,10 @@ class ExllamaModel:
             self.generator.gen_begin_reuse(ids)
             initial_len = self.generator.sequence[0].shape[0]
             has_leading_space = False
+
+            if initial_len == 0:
+                ids = torch.tensor([[self.tokenizer.bos_token_id]], dtype=torch.long)
+                self.generator.gen_begin_reuse(ids)
 
             for i in range(max_new_tokens):
                 token = self.generator.gen_single_token()

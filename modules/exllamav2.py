@@ -69,6 +69,9 @@ class Exllamav2Model:
         ids = ids[:, -get_max_prompt_length(state):]
         initial_len = ids.shape[-1]
 
+        if initial_len == 0:
+            ids = torch.tensor([[self.tokenizer.bos_token_id]], dtype=torch.long)
+
         if state['auto_max_new_tokens']:
             max_new_tokens = state['truncation_length'] - ids.shape[-1]
         else:
